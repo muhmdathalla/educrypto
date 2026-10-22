@@ -1326,8 +1326,13 @@ async function initApp() {
       state.fx = initData.fx;
       renderFxData();
     }
+  } catch (err) {
+    console.warn('Initial server configuration error:', err);
+  }
+}
+
 // =============================================================================
-// 15. CLIENT-SIDE FALLBACK ROUTER (STANDALONE NETLIFY HOSTING)
+// 15. CLIENT-SIDE FALLBACK ROUTER (STANDALONE HOSTING)
 // =============================================================================
 async function handleClientFallback(endpoint, payload) {
   const t0 = performance.now();
@@ -1473,6 +1478,8 @@ async function handleClientFallback(endpoint, payload) {
         }
       };
     }
+  }
+
   // RSA Keypair & Direct Cryptography Fallback
   if (endpoint === '/api/rsa/generate') {
     const bits = parseInt(payload.bits, 10) || 2048;
