@@ -22,11 +22,11 @@
        STICKY EDITORIAL HEADER: ACTIVE CRYPTO ENGINE STATUS + LIVE USD/IDR FX
        ======================================================================== -->
   <header class="top-header">
-    <div class="brand-cluster">
+    <div class="brand-cluster" data-nav-target="mod-home" style="cursor:pointer;" title="Kembali ke Beranda">
       <div class="brand-monogram">EC</div>
       <div class="brand-titles">
         <span class="brand-name">EduCrypto Studio</span>
-        <span class="brand-sub">Cryptographic Laboratory // v2.5</span>
+        <span class="brand-sub">Cryptographic Laboratory</span>
       </div>
     </div>
 
@@ -34,11 +34,11 @@
     <div class="header-active-status" id="header-active-status">
       <div class="status-pulse-wrap">
         <span class="status-dot"></span>
-        <span id="header-engine-badge">MODUL AKTIF</span>
+        <span id="header-engine-badge">SISTEM</span>
       </div>
       <div class="active-module-info">
-        <span class="active-module-name" id="header-module-name">01 / Caesar Cipher</span>
-        <span class="active-module-meta" id="header-module-spec">Substitusi Monoalfabetik · Z₂₆ Ring</span>
+        <span class="active-module-name" id="header-module-name">Beranda // EduCrypto</span>
+        <span class="active-module-meta" id="header-module-spec">Pusat Eksplorasi Kriptografi</span>
       </div>
     </div>
 
@@ -90,43 +90,107 @@
        ======================================================================== -->
   <main class="workspace-container">
 
-    <!-- Welcoming Portal Banner (Clean, Minimalist & Focused) -->
-    <header class="portal-welcome" id="portal-welcome">
-      <div class="portal-welcome-meta">
-        <span class="portal-badge">STUDIO KRIPTOGRAFI INTERAKTIF</span>
-        <span class="portal-date">Semester 5 · Laboratorium Kriptografi</span>
+    <!-- ======================================================================
+         MODUL 00: HOMEPAGE / BERANDA (CLEAN & MINIMALIST EDITORIAL OVERVIEW)
+         ====================================================================== -->
+    <section class="module-section active" id="mod-home" data-module-index="00">
+      <div class="home-hero">
+        <span class="home-badge">STUDIO KRIPTOGRAFI INTERAKTIF</span>
+        <h1 class="home-title">Eksplorasi Algoritma Sandi & Keamanan Informasi</h1>
+        <p class="home-desc">
+          Platform laboratorium untuk pengujian algoritma kriptografi klasik hingga modern, enkripsi multimedia universal, dan analisis keamanan matematis.
+        </p>
       </div>
-      <h1 class="portal-title">Pusat Eksplorasi & Uji Algoritma Sandi</h1>
-      <p class="portal-desc">
-        Pilih modul algoritma di bawah untuk memulai enkripsi, dekripsi, analisis entropi Shannon, serta enkripsi file multimedia. Navigasi cepat juga dapat diakses kapan saja melalui <em>Floating Liquid Glass Dock</em> di bagian bawah.
-      </p>
 
-      <!-- Quick Navigation Category Chips -->
-      <div class="quick-nav-strip">
-        <button type="button" class="quick-chip active" data-nav-target="mod-caesar">1. Caesar (Mono)</button>
-        <button type="button" class="quick-chip" data-nav-target="mod-vigenere">2. Vigenère (Poly)</button>
-        <button type="button" class="quick-chip" data-nav-target="mod-rc4">3. RC4 (Stream)</button>
-        <button type="button" class="quick-chip" data-nav-target="mod-rsa">4. RSA (Asimetris)</button>
-        <button type="button" class="quick-chip" data-nav-target="mod-super">5. Super Enkripsi (4-Layer)</button>
-        <button type="button" class="quick-chip" data-nav-target="mod-media">6. File & Media Vault</button>
-        <button type="button" class="quick-chip" data-nav-target="mod-audit">7. Audit & Kriptanalisis</button>
+      <!-- Grid 7 Modul Kriptografi Interaktif -->
+      <div class="home-grid">
+        <div class="home-card" data-nav-target="mod-caesar">
+          <div class="home-card-header">
+            <span class="home-card-num">01</span>
+            <span class="home-card-tag">Monoalfabetik</span>
+          </div>
+          <h2 class="home-card-title">Caesar Cipher</h2>
+          <p class="home-card-desc">Substitusi pergeseran alfabet Latin dalam ring grup modulo 26.</p>
+          <div class="home-card-action">Buka Modul →</div>
+        </div>
+
+        <div class="home-card" data-nav-target="mod-vigenere">
+          <div class="home-card-header">
+            <span class="home-card-num">02</span>
+            <span class="home-card-tag">Polialfabetik</span>
+          </div>
+          <h2 class="home-card-title">Vigenère Cipher</h2>
+          <p class="home-card-desc">Substitusi deret dinamis menggunakan kata kunci berulang (keystream).</p>
+          <div class="home-card-action">Buka Modul →</div>
+        </div>
+
+        <div class="home-card" data-nav-target="mod-rc4">
+          <div class="home-card-header">
+            <span class="home-card-num">03</span>
+            <span class="home-card-tag">Stream Simetris</span>
+          </div>
+          <h2 class="home-card-title">RC4 Stream Cipher</h2>
+          <p class="home-card-desc">Enkripsi stream simetris modern berbasis permutasi S-Box 256-byte.</p>
+          <div class="home-card-action">Buka Modul →</div>
+        </div>
+
+        <div class="home-card" data-nav-target="mod-rsa">
+          <div class="home-card-header">
+            <span class="home-card-num">04</span>
+            <span class="home-card-tag">Asimetris Kunci Publik</span>
+          </div>
+          <h2 class="home-card-title">RSA PKCS#1 OAEP</h2>
+          <p class="home-card-desc">Kriptografi kunci asimetris 2048-bit dengan optimal asymmetric encryption padding.</p>
+          <div class="home-card-action">Buka Modul →</div>
+        </div>
+
+        <div class="home-card" data-nav-target="mod-super">
+          <div class="home-card-header">
+            <span class="home-card-num">05</span>
+            <span class="home-card-tag">Defense in Depth</span>
+          </div>
+          <h2 class="home-card-title">Super Enkripsi (4-Lapis)</h2>
+          <p class="home-card-desc">Pipeline berantai: Caesar → Vigenère → RC4 Stream → RSA-OAEP.</p>
+          <div class="home-card-action">Buka Modul →</div>
+        </div>
+
+        <div class="home-card" data-nav-target="mod-media">
+          <div class="home-card-header">
+            <span class="home-card-num">06</span>
+            <span class="home-card-tag">Multimedia Universal</span>
+          </div>
+          <h2 class="home-card-title">File & Media Vault</h2>
+          <p class="home-card-desc">Enkripsi file Gambar, Audio, dan Dokumen biner dengan verifikasi checksum SHA-256.</p>
+          <div class="home-card-action">Buka Modul →</div>
+        </div>
+
+        <div class="home-card" data-nav-target="mod-audit">
+          <div class="home-card-header">
+            <span class="home-card-num">07</span>
+            <span class="home-card-tag">Kriptanalisis & Audit</span>
+          </div>
+          <h2 class="home-card-title">Security Audit Lab</h2>
+          <p class="home-card-desc">Benchmark Entropi Shannon, Avalanche Effect, Index of Coincidence, & Brute-Force.</p>
+          <div class="home-card-action">Buka Modul →</div>
+        </div>
       </div>
-    </header>
+    </section>
 
     <!-- ======================================================================
          MODUL 01: CAESAR CIPHER
          ====================================================================== -->
-    <section class="module-section active" id="mod-caesar" data-module-index="01">
+    <section class="module-section" id="mod-caesar" data-module-index="01">
+      <div class="module-topbar">
+        <button type="button" class="btn-back-home" data-nav-target="mod-home">← Beranda</button>
+      </div>
       <div class="module-hero">
         <div>
-          <div class="module-index-tag">MODUL 01 // KRIPTOGRAFI KLASIK MONOALFABETIK</div>
           <h1 class="module-headline">Caesar Cipher</h1>
           <p class="module-description">
-            Substitusi monoalfabetik klasik yang menggeser setiap karakter alfabet Latin sejauh kunci tetap <em>k</em> di dalam grup siklik modulo 26. Karakter non-alfabet (spasi, angka, tanda baca) dipertahankan secara utuh.
+            Substitusi monoalfabetik dengan pergeseran posisi alfabet modulo 26.
           </p>
         </div>
         <div class="math-specification">
-          <div class="math-spec-label">SPESIFIKASI MATEMATIS</div>
           <div class="math-spec-formula">E_k(P) = (P + k) mod 26</div>
           <div class="math-spec-formula">D_k(C) = (C − k) mod 26</div>
         </div>
@@ -251,16 +315,17 @@
          MODUL 02: VIGENÈRE CIPHER
          ====================================================================== -->
     <section class="module-section" id="mod-vigenere" data-module-index="02">
+      <div class="module-topbar">
+        <button type="button" class="btn-back-home" data-nav-target="mod-home">← Beranda</button>
+      </div>
       <div class="module-hero">
         <div>
-          <div class="module-index-tag">MODUL 02 // KRIPTOGRAFI KLASIK POLIALFABETIK</div>
           <h1 class="module-headline">Vigenère Cipher</h1>
           <p class="module-description">
-            Algoritma substitusi polialfabetik yang menggunakan kata kunci berulang (<em>keystream</em>) untuk memvariasikan pergeseran setiap huruf secara dinamis. Karakter non-alfabet tidak diubah dan tidak mengonsumsi indeks kata kunci.
+            Substitusi polialfabetik dengan deret sandi berulang berbasis kata kunci.
           </p>
         </div>
         <div class="math-specification">
-          <div class="math-spec-label">SPESIFIKASI MATEMATIS</div>
           <div class="math-spec-formula">C_i = (P_i + K_{i mod m}) mod 26</div>
           <div class="math-spec-formula">P_i = (C_i − K_{i mod m}) mod 26</div>
         </div>
@@ -397,16 +462,17 @@
          MODUL 03: RC4 STREAM CIPHER
          ====================================================================== -->
     <section class="module-section" id="mod-rc4" data-module-index="03">
+      <div class="module-topbar">
+        <button type="button" class="btn-back-home" data-nav-target="mod-home">← Beranda</button>
+      </div>
       <div class="module-hero">
         <div>
-          <div class="module-index-tag">MODUL 03 // STREAM CIPHER SIMETRIS MODERN</div>
-          <h1 class="module-headline">RC4 (Rivest Cipher 4)</h1>
+          <h1 class="module-headline">RC4 Stream Cipher</h1>
           <p class="module-description">
-            Stream cipher simetris berbasis permutasi array 256-byte (<em>S-Box</em>) melalui dua algoritma inti: <strong>KSA (Key-Scheduling Algorithm)</strong> dan <strong>PRGA (Pseudo-Random Generation Algorithm)</strong> yang di-XOR secara bitwise dengan byte data.
+            Stream cipher simetris modern berbasis permutasi S-Box 256-byte (KSA & PRGA) dengan bitwise XOR.
           </p>
         </div>
         <div class="math-specification">
-          <div class="math-spec-label">OPERASI BITWISE STREAM</div>
           <div class="math-spec-formula">S ← KSA(Key),  K_i ← PRGA(S)</div>
           <div class="math-spec-formula">C_i = P_i ⊕ K_i  |  P_i = C_i ⊕ K_i</div>
         </div>
@@ -562,16 +628,17 @@
          MODUL 04: RSA ASYMMETRIC CIPHER (PKCS#1 OAEP)
          ====================================================================== -->
     <section class="module-section" id="mod-rsa" data-module-index="04">
+      <div class="module-topbar">
+        <button type="button" class="btn-back-home" data-nav-target="mod-home">← Beranda</button>
+      </div>
       <div class="module-hero">
         <div>
-          <div class="module-index-tag">MODUL 04 // KRIPTOGRAFI ASIMETRIS KUNCI PUBLIK</div>
           <h1 class="module-headline">RSA PKCS#1 OAEP</h1>
           <p class="module-description">
-            Kriptografi asimetris menggunakan sepasang kunci matematis berbasis kesulitan pemfaktoran bilangan prima besar: <strong>Public Key (e, n)</strong> untuk mengenkripsi disertai <em>Optimal Asymmetric Encryption Padding (OAEP)</em>, dan <strong>Private Key (d, n)</strong> untuk mendekripsi.
+            Kriptografi kunci asimetris 2048-bit dengan optimal asymmetric encryption padding (OAEP).
           </p>
         </div>
         <div class="math-specification">
-          <div class="math-spec-label">TRAPDOOR MODULAR EXPONENTIATION</div>
           <div class="math-spec-formula">n = p × q,  φ(n) = (p−1)(q−1)</div>
           <div class="math-spec-formula">C ≡ M^e mod n  |  M ≡ C^d mod n</div>
         </div>
@@ -701,17 +768,17 @@
          MODUL 05: SUPER ENKRIPSI (4-LAYER DEFENSE-IN-DEPTH PIPELINE)
          ====================================================================== -->
     <section class="module-section" id="mod-super" data-module-index="05">
+      <div class="module-topbar">
+        <button type="button" class="btn-back-home" data-nav-target="mod-home">← Beranda</button>
+      </div>
       <div class="module-hero">
         <div>
-          <div class="module-index-tag">MODUL 05 // MULTI-LAYER DEFENSE IN DEPTH PIPELINE</div>
           <h1 class="module-headline">Super Enkripsi (4-Lapis)</h1>
           <p class="module-description">
-            Arsitektur enkripsi berlapis berantai yang menggabungkan kriptografi klasik dan modern secara sekuensial:
-            <strong>Plaintext → 1. Caesar → 2. Vigenère → 3. RC4 Stream → 4. RSA PKCS#1 OAEP → Ciphertext Akhir</strong>.
+            Pipeline berantai: Caesar → Vigenère → RC4 Stream → RSA PKCS#1 OAEP.
           </p>
         </div>
         <div class="math-specification">
-          <div class="math-spec-label">KOMPOSISI FUNGSI BERANTAI</div>
           <div class="math-spec-formula">C = E_RSA( E_RC4( E_Vig( E_Caesar(P) ) ) )</div>
           <div class="math-spec-formula">P = D_Caesar( D_Vig( D_RC4( D_RSA(C) ) ) )</div>
         </div>
@@ -827,26 +894,27 @@
          MODUL 06: MULTIMEDIA & FILE VAULT (GAMBAR, AUDIO, DOKUMEN, BINER)
          ====================================================================== -->
     <section class="module-section" id="mod-media" data-module-index="06">
+      <div class="module-topbar">
+        <button type="button" class="btn-back-home" data-nav-target="mod-home">← Beranda</button>
+      </div>
       <div class="module-hero">
         <div>
-          <div class="module-index-tag">MODUL 06 // ENKRIPSI & DEKRIPSI FILE MULTIMEDIA UNIVERSAL</div>
-          <h1 class="module-headline">File, Image & Audio Vault</h1>
+          <h1 class="module-headline">File & Media Vault</h1>
           <p class="module-description">
-            Enkripsi dan dekripsi file biner apa pun — <strong>Gambar (PNG/JPG/WebP), Audio (WAV/MP3), Dokumen (PDF/DOCX/ZIP)</strong> — menggunakan salah satu dari 5 algoritma kriptografi dengan verifikasi keutuhan <strong>SHA-256 Checksum</strong> otomatis.
+            Enkripsi file Gambar, Audio, dan Dokumen biner dengan verifikasi checksum SHA-256 otomatis.
           </p>
         </div>
         <div class="math-specification">
-          <div class="math-spec-label">ARSITEKTUR KONTAINER BINER</div>
           <div class="math-spec-formula">ECRY2 Header + JSON Meta + Payload</div>
           <div class="math-spec-formula">Integrity: SHA-256(Plain) == SHA-256(Dec)</div>
         </div>
       </div>
 
-      <!-- Baris Generator Sampel Instan (Untuk Demo di Depan Dosen Tanpa Perlu Cari File) -->
+      <!-- Baris Generator Sampel Instan -->
       <div class="inspector-section" style="padding-top:0; padding-bottom:1.5rem;">
         <div class="field-label-row">
-          <span class="field-label">GENERATOR FILE SAMPEL INSTAN (UNTUK DEMO LANGSUNG DI DEPAN DOSEN)</span>
-          <span class="field-hint">Klik salah satu untuk langsung memuat file uji ke dalam brankas</span>
+          <span class="field-label">SAMPEL UJI INSTAN (KLIK UNTUK DEMO CEPAT)</span>
+          <span class="field-hint">Muat file uji langsung tanpa upload manual</span>
         </div>
         <div class="action-bar" style="margin-top:0.5rem;">
           <button type="button" class="btn-secondary" id="btn-sample-image">Muat Sampel Gambar ( Seal Kriptografi PNG )</button>
@@ -958,16 +1026,17 @@
          MODUL 07: LABORATORIUM AUDIT KEAMANAN & KRIPTANALISIS (PRESENTASI DOSEN)
          ====================================================================== -->
     <section class="module-section" id="mod-audit" data-module-index="07">
+      <div class="module-topbar">
+        <button type="button" class="btn-back-home" data-nav-target="mod-home">← Beranda</button>
+      </div>
       <div class="module-hero">
         <div>
-          <div class="module-index-tag">MODUL 07 // ANALISIS STATISTIK, AVALANCHE EFFECT & KRIPTANALISIS</div>
-          <h1 class="module-headline">Security Audit & Cryptanalysis Lab</h1>
+          <h1 class="module-headline">Security Audit Lab</h1>
           <p class="module-description">
-            Modul pembuktian ilmiah untuk presentasi akademik: membandingkan <strong>Entropi Informasi Shannon</strong>, <strong>Avalanche Effect (sensitivitas perubahan 1-bit)</strong>, <strong>Index of Coincidence (IoC)</strong>, serta demonstrasi pembobolan otomatis <strong>Brute-Force Attack</strong> pada sandi klasik.
+            Benchmark komparatif: Entropi Shannon, Avalanche Effect (1-bit flip), IoC, dan Brute-Force.
           </p>
         </div>
         <div class="math-specification">
-          <div class="math-spec-label">METRIK EVALUASI KRIPTOGRAFI</div>
           <div class="math-spec-formula">H(X) = −∑ P(x_i) log₂ P(x_i)</div>
           <div class="math-spec-formula">Avalanche = Hamming(C₁, C₂) / |C|</div>
         </div>
@@ -1053,7 +1122,12 @@
        ======================================================================== -->
   <nav class="liquid-dock-wrapper" aria-label="Navigasi Modul Kriptografi">
     <div class="liquid-dock" id="liquid-dock">
-      <button type="button" class="dock-item active" data-target="mod-caesar" data-name="01 / Caesar Cipher" data-spec="Substitusi Monoalfabetik · Z₂₆ Ring">
+      <button type="button" class="dock-item active" data-target="mod-home" data-name="Beranda // EduCrypto" data-spec="Pusat Eksplorasi Kriptografi">
+        <span class="dock-item-num">00</span>
+        <span>Beranda</span>
+      </button>
+      <div class="dock-divider" aria-hidden="true"></div>
+      <button type="button" class="dock-item" data-target="mod-caesar" data-name="01 / Caesar Cipher" data-spec="Substitusi Monoalfabetik · Z₂₆ Ring">
         <span class="dock-item-num">01</span>
         <span>Caesar</span>
       </button>
@@ -1063,24 +1137,24 @@
       </button>
       <button type="button" class="dock-item" data-target="mod-rc4" data-name="03 / RC4 Stream" data-spec="Simetris KSA + PRGA Bitwise XOR">
         <span class="dock-item-num">03</span>
-        <span>RC4 Stream</span>
+        <span>RC4</span>
       </button>
       <button type="button" class="dock-item" data-target="mod-rsa" data-name="04 / RSA Asymmetric" data-spec="Public-Key PKCS#1 OAEP · 2048-bit">
         <span class="dock-item-num">04</span>
-        <span>RSA OAEP</span>
+        <span>RSA</span>
       </button>
       <button type="button" class="dock-item" data-target="mod-super" data-name="05 / Super Enkripsi" data-spec="Pipeline Berantai 4-Lapis (Defense in Depth)">
         <span class="dock-item-num">05</span>
-        <span>Super Enkripsi</span>
+        <span>Super</span>
       </button>
       <div class="dock-divider" aria-hidden="true"></div>
       <button type="button" class="dock-item" data-target="mod-media" data-name="06 / File & Media Vault" data-spec="Enkripsi Gambar, Audio & Dokumen + SHA-256">
         <span class="dock-item-num">06</span>
-        <span>File / Media Vault</span>
+        <span>Vault</span>
       </button>
       <button type="button" class="dock-item" data-target="mod-audit" data-name="07 / Security Audit Lab" data-spec="Shannon Entropy · Avalanche · Brute-Force">
         <span class="dock-item-num">07</span>
-        <span>Audit & Kriptanalisis</span>
+        <span>Audit</span>
       </button>
     </div>
   </nav>

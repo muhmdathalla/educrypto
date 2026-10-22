@@ -9,7 +9,7 @@
 // =============================================================================
 const state = {
   theme: localStorage.getItem('educrypto_theme') || 'dark',
-  activeModuleId: 'mod-caesar',
+  activeModuleId: 'mod-home',
   rsaKeypair: {
     publicKey: '',
     privateKey: '',
@@ -222,12 +222,21 @@ function initNavigation() {
     });
   });
 
-  // Quick Navigation Chips Event Handlers
-  document.querySelectorAll('.quick-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const targetId = chip.getAttribute('data-nav-target');
+  // Global Navigation Target Event Handlers (Cards, Chips, Back Buttons, Logo)
+  document.querySelectorAll('[data-nav-target]').forEach(targetEl => {
+    targetEl.addEventListener('click', () => {
+      const targetId = targetEl.getAttribute('data-nav-target');
       const dockBtn = document.querySelector(`.dock-item[data-target="${targetId}"]`);
-      if (dockBtn) dockBtn.click();
+      if (dockBtn) {
+        dockBtn.click();
+      } else {
+        document.querySelectorAll('.module-section').forEach(sec => sec.classList.remove('active'));
+        const activeSec = document.getElementById(targetId);
+        if (activeSec) {
+          activeSec.classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
     });
   });
 
