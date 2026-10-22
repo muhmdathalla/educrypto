@@ -210,10 +210,24 @@ function initNavigation() {
 
       state.activeModuleId = targetId;
 
+      // Sync Quick Nav Chips
+      document.querySelectorAll('.quick-chip').forEach(c => {
+        c.classList.toggle('active', c.getAttribute('data-nav-target') === targetId);
+      });
+
       // Trigger auto audit jika masuk ke Modul Audit
       if (targetId === 'mod-audit' && !state.auditData) {
         runAudit();
       }
+    });
+  });
+
+  // Quick Navigation Chips Event Handlers
+  document.querySelectorAll('.quick-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const targetId = chip.getAttribute('data-nav-target');
+      const dockBtn = document.querySelector(`.dock-item[data-target="${targetId}"]`);
+      if (dockBtn) dockBtn.click();
     });
   });
 
