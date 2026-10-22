@@ -587,6 +587,7 @@ function initSuper() {
         private_key: priv
       });
       decOut.value = res.final_plaintext;
+      renderSuperDecTimeline(res);
       showToast('Super Dekripsi Berhasil Memulihkan Pesan Awal!');
     } catch (err) {}
   }
@@ -647,6 +648,63 @@ function renderSuperTimeline(data) {
         <div class="telemetry-label">ENTROPI SHANNON</div>
         <div style="font-size:1.15rem; font-weight:700;">${s.metric ? s.metric.entropy : '—'}</div>
         <div class="field-hint">${s.metric ? s.metric.size : '—'} Bytes</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSuperDecTimeline(data) {
+  const container = document.getElementById('super-pipeline-timeline');
+  const label = document.getElementById('super-pipeline-mode-label');
+  if (label) label.textContent = 'Tahapan Pembalikan Dekripsi (Lapis 4 RSA → RC4 → Vigenère → Caesar → Plaintext Asli)';
+  if (!container) return;
+
+  const stages = [
+    {
+      name: 'Langkah 0: Ciphertext Input (Base64)',
+      desc: 'Sandi Utuh Multi-Layer',
+      code: data.step0_ciphertext_b64,
+      detail: 'Panjang: ' + data.step0_ciphertext_b64.length + ' karakter'
+    },
+    {
+      name: 'Langkah 1: RSA Decrypt (Kunci Privat)',
+      desc: 'Memulihkan Byte Stream RC4 (Hex / Base64)',
+      code: data.step1_rsa_decrypted_hex,
+      detail: 'Format Hex: ' + data.step1_rsa_decrypted_hex.substring(0, 32) + '...'
+    },
+    {
+      name: 'Langkah 2: RC4 Decrypt (Bitwise XOR Keystream)',
+      desc: 'Memulihkan Teks Polialfabetik Vigenère',
+      code: data.step2_rc4_decrypted_text,
+      detail: 'Encoding: UTF-8 Text'
+    },
+    {
+      name: 'Langkah 3: Vigenère Decrypt (Invers Kata Kunci)',
+      desc: 'Memulihkan Teks Pergeseran Caesar',
+      code: data.step3_vigenere_decrypted_text,
+      detail: 'Kunci: ' + document.getElementById('super-vig-key').value
+    },
+    {
+      name: 'Langkah 4: Caesar Decrypt (Pergeseran Balik −k)',
+      desc: 'Memulihkan Plaintext Bahasa Alami 100% Utuh',
+      code: data.step4_caesar_decrypted_plaintext,
+      detail: 'Shift: -' + document.getElementById('super-shift').value
+    }
+  ];
+
+  container.innerHTML = stages.map(s => `
+    <div class="pipeline-stage">
+      <div>
+        <div class="stage-badge">${s.name}</div>
+        <div class="stage-desc">${s.desc}</div>
+      </div>
+      <div>
+        <div class="stage-output-code">${escapeHtml(s.code)}</div>
+      </div>
+      <div class="stage-entropy-meter">
+        <div class="telemetry-label">STATUS TAHAP</div>
+        <div style="font-size:0.95rem; font-weight:700;">TERBUKA ✓</div>
+        <div class="field-hint">${s.detail}</div>
       </div>
     </div>
   `).join('');
