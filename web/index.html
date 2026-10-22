@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduCrypto Studio — Monochrome Cryptographic Workbench</title>
+  <!-- Premium Typography: Instrument Serif + Plus Jakarta Sans + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Subtle Animated Cryptographic Lattice Background -->
+  <canvas id="crypto-canvas" aria-hidden="true"></canvas>
+  <div class="ambient-vignette" aria-hidden="true"></div>
+
+  <!-- Toast Notification Area -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- ========================================================================
+       STICKY EDITORIAL HEADER: ACTIVE CRYPTO ENGINE STATUS + LIVE USD/IDR FX
+       ======================================================================== -->
+  <header class="top-header">
+    <div class="brand-cluster">
+      <div class="brand-monogram">EC</div>
+      <div class="brand-titles">
+        <span class="brand-name">EduCrypto Studio</span>
+        <span class="brand-sub">Cryptographic Laboratory // v2.5</span>
+      </div>
+    </div>
+
+    <!-- Active Cryptographic Engine Status -->
+    <div class="header-active-status" id="header-active-status">
+      <div class="status-pulse-wrap">
+        <span class="status-dot"></span>
+        <span id="header-engine-badge">MODUL AKTIF</span>
+      </div>
+      <div class="active-module-info">
+        <span class="active-module-name" id="header-module-name">01 / Caesar Cipher</span>
+        <span class="active-module-meta" id="header-module-spec">Substitusi Monoalfabetik · Z₂₆ Ring</span>
+      </div>
+    </div>
+
+    <!-- Right Telemetry: Live USD/IDR Kurs + Academic Defense Sheet + Theme Switch -->
+    <div class="header-telemetry">
+      <!-- Live USD/IDR Ticker Pill with Interactive Popover -->
+      <div class="fx-ticker-pill" id="fx-ticker-btn" title="Klik untuk Kalkulator Kurs USD / IDR & Detail Feed">
+        <span class="fx-pair">USD / IDR</span>
+        <span class="fx-value" id="fx-rate-display">Rp 16.245,00</span>
+        <svg class="fx-sparkline" id="fx-sparkline" viewBox="0 0 44 16">
+          <polyline points="0,13 8,10 16,11 24,7 32,8 40,4 44,3" />
+        </svg>
+
+        <!-- Popover Converter -->
+        <div class="fx-popover" id="fx-popover" onclick="event.stopPropagation()">
+          <div class="field-label-row" style="margin-bottom:0.65rem;">
+            <span class="field-label">LIVE MARKET FEED (USD ⇄ IDR)</span>
+            <span class="field-hint" id="fx-source-label">Spot Rate</span>
+          </div>
+          <div style="margin-bottom:0.85rem;">
+            <label class="field-hint" for="fx-usd-input">Nominal USD ($)</label>
+            <input type="number" id="fx-usd-input" class="editorial-input" value="100" step="1" min="0" />
+          </div>
+          <div style="margin-bottom:0.85rem;">
+            <label class="field-hint">Konversi Rupiah (IDR)</label>
+            <div class="telemetry-value" id="fx-idr-output" style="font-size:1.15rem; padding-top:0.25rem;">Rp 1.624.500</div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-hairline); padding-top:0.65rem;">
+            <span class="field-hint" id="fx-updated-time">Real-time Sync</span>
+            <button type="button" class="btn-ghost" id="btn-refresh-fx">Refresh Kurs ↻</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Presentation Cheat Sheet Button -->
+      <button type="button" class="icon-pill-btn" id="btn-open-defense" title="Ringkasan Teori & Pertanyaan Sidang Dosen">
+        <span>Sidang / Dosen</span>
+      </button>
+
+      <!-- Monochrome Theme Toggle (Obsidian Dark ⇄ Alabaster Light) -->
+      <button type="button" class="icon-pill-btn" id="btn-theme-toggle" title="Ganti Tema Hitam / Putih">
+        <span id="theme-toggle-label">TEMA: GELAP</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN ARCHITECTURAL WORKSPACE
+       ======================================================================== -->
+  <main class="workspace-container">
+
+    <!-- ======================================================================
+         MODUL 01: CAESAR CIPHER
+         ====================================================================== -->
+    <section class="module-section active" id="mod-caesar" data-module-index="01">
+      <div class="module-hero">
+        <div>
+          <div class="module-index-tag">MODUL 01 // KRIPTOGRAFI KLASIK MONOALFABETIK</div>
+          <h1 class="module-headline">Caesar Cipher</h1>
+          <p class="module-description">
+            Substitusi monoalfabetik klasik yang menggeser setiap karakter alfabet Latin sejauh kunci tetap <em>k</em> di dalam grup siklik modulo 26. Karakter non-alfabet (spasi, angka, tanda baca) dipertahankan secara utuh.
+          </p>
+        </div>
+        <div class="math-specification">
+          <div class="math-spec-label">SPESIFIKASI MATEMATIS</div>
+          <div class="math-spec-formula">E_k(P) = (P + k) mod 26</div>
+          <div class="math-spec-formula">D_k(C) = (C − k) mod 26</div>
+        </div>
+      </div>
+
+      <!-- Split Enkripsi & Dekripsi (Terpisah Jelas & Auto-Sync) -->
+      <div class="workbench-split">
+        <!-- Pane Enkripsi -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">E</span> ENKRIPSI PLAINTEXT</span>
+            <span class="field-hint">Auto-Sync ke Dekripsi</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="caesar-enc-text">Teks Terang (Plaintext)</label>
+              <span class="field-hint" id="caesar-enc-len">55 chars</span>
+            </div>
+            <textarea id="caesar-enc-text" class="editorial-textarea">Kriptografi adalah seni menjaga kerahasiaan informasi.</textarea>
+          </div>
+
+          <div class="param-row">
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="caesar-enc-shift">Nilai Pergeseran (Shift k)</label>
+                <span class="field-hint" id="caesar-enc-shift-badge">+3 langkah</span>
+              </div>
+              <input type="number" id="caesar-enc-shift" class="editorial-input" min="1" max="25" value="3" />
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-primary" id="btn-caesar-enc">Enkripsi Caesar →</button>
+            <button type="button" class="btn-ghost" data-copy-target="caesar-enc-out">Salin Ciphertext</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.75rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Hasil Ciphertext</label>
+              <span class="field-hint">Output Terenkripsi</span>
+            </div>
+            <textarea id="caesar-enc-out" class="editorial-textarea" readonly style="min-height:92px;"></textarea>
+          </div>
+        </div>
+
+        <!-- Pane Dekripsi -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">D</span> DEKRIPSI CIPHERTEXT</span>
+            <span class="field-hint">Invers Modulo 26</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="caesar-dec-text">Teks Sandi (Ciphertext)</label>
+              <span class="field-hint">Siap Dekripsi</span>
+            </div>
+            <textarea id="caesar-dec-text" class="editorial-textarea">Nulswrjudil dgdodk vhql phqmdjd nhudkdvlddq lqirupdvl.</textarea>
+          </div>
+
+          <div class="param-row">
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="caesar-dec-shift">Nilai Pergeseran (Shift k)</label>
+                <span class="field-hint" id="caesar-dec-shift-badge">−3 langkah</span>
+              </div>
+              <input type="number" id="caesar-dec-shift" class="editorial-input" min="1" max="25" value="3" />
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-secondary" id="btn-caesar-dec">← Dekripsi ke Plaintext</button>
+            <button type="button" class="btn-ghost" data-copy-target="caesar-dec-out">Salin Plaintext</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.75rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Hasil Pemulihan Plaintext</label>
+              <span class="field-hint">100% Lossless</span>
+            </div>
+            <textarea id="caesar-dec-out" class="editorial-textarea" readonly style="min-height:92px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry Ribbon -->
+      <div class="telemetry-strip">
+        <div class="telemetry-item">
+          <span class="telemetry-label">SHANNON ENTROPY (IN → OUT)</span>
+          <span class="telemetry-value" id="caesar-metric-entropy">4.12 → 4.12</span>
+          <span class="telemetry-sub">Bits/Byte (Identik karena substitusi 1-ke-1)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">INDEX OF COINCIDENCE (IoC)</span>
+          <span class="telemetry-value" id="caesar-metric-ioc">0.0714</span>
+          <span class="telemetry-sub">Tanda bahasa alami tetap terlihat</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">RUANG KUNCI (KEYSPACE)</span>
+          <span class="telemetry-value">25 Kunci</span>
+          <span class="telemetry-sub">Rentan terhadap Exhaustive Brute-Force</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">WAKTU KOMPUTASI</span>
+          <span class="telemetry-value" id="caesar-metric-time">0.08 ms</span>
+          <span class="telemetry-sub">Kompleksitas O(N)</span>
+        </div>
+      </div>
+
+      <!-- Visualisasi Pita Pemetaan Alfabet & Distribusi Frekuensi -->
+      <div class="inspector-section">
+        <div class="inspector-header">
+          <h2 class="inspector-title">Pita Pemetaan Substitusi Alfabet (A–Z)</h2>
+          <span class="inspector-subtitle" id="caesar-map-caption">Pergeseran Aktif: k = +3</span>
+        </div>
+        <div class="alphabet-map-track" id="caesar-alphabet-track"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODUL 02: VIGENÈRE CIPHER
+         ====================================================================== -->
+    <section class="module-section" id="mod-vigenere" data-module-index="02">
+      <div class="module-hero">
+        <div>
+          <div class="module-index-tag">MODUL 02 // KRIPTOGRAFI KLASIK POLIALFABETIK</div>
+          <h1 class="module-headline">Vigenère Cipher</h1>
+          <p class="module-description">
+            Algoritma substitusi polialfabetik yang menggunakan kata kunci berulang (<em>keystream</em>) untuk memvariasikan pergeseran setiap huruf secara dinamis. Karakter non-alfabet tidak diubah dan tidak mengonsumsi indeks kata kunci.
+          </p>
+        </div>
+        <div class="math-specification">
+          <div class="math-spec-label">SPESIFIKASI MATEMATIS</div>
+          <div class="math-spec-formula">C_i = (P_i + K_{i mod m}) mod 26</div>
+          <div class="math-spec-formula">P_i = (C_i − K_{i mod m}) mod 26</div>
+        </div>
+      </div>
+
+      <div class="workbench-split">
+        <!-- Pane Enkripsi -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">E</span> ENKRIPSI POLIALFABETIK</span>
+            <span class="field-hint">Auto-Sync ke Dekripsi</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="vig-enc-text">Teks Terang (Plaintext)</label>
+              <span class="field-hint">UTF-8 / Latin</span>
+            </div>
+            <textarea id="vig-enc-text" class="editorial-textarea">Serang musuh di bukit timur saat fajar tiba!</textarea>
+          </div>
+
+          <div class="param-row">
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="vig-enc-key">Kata Kunci (Alfabet A–Z)</label>
+                <span class="field-hint" id="vig-clean-key-badge">Kunci Bersih: GARUDA</span>
+              </div>
+              <input type="text" id="vig-enc-key" class="editorial-input" value="GARUDA" />
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-primary" id="btn-vig-enc">Enkripsi Vigenère →</button>
+            <button type="button" class="btn-ghost" data-copy-target="vig-enc-out">Salin Ciphertext</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.75rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Hasil Ciphertext</label>
+              <span class="field-hint">Polialfabetik</span>
+            </div>
+            <textarea id="vig-enc-out" class="editorial-textarea" readonly style="min-height:92px;"></textarea>
+          </div>
+        </div>
+
+        <!-- Pane Dekripsi -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">D</span> DEKRIPSI POLIALFABETIK</span>
+            <span class="field-hint">Sinkronisasi Kunci Otomatis</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="vig-dec-text">Teks Sandi (Ciphertext)</label>
+              <span class="field-hint">Valid Default</span>
+            </div>
+            <textarea id="vig-dec-text" class="editorial-textarea">Yeiuqg sujok do blelt zidou sgak zdjgr kcea!</textarea>
+          </div>
+
+          <div class="param-row">
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="vig-dec-key">Kata Kunci Pembuka (Key)</label>
+                <span class="field-hint">Case-Insensitive</span>
+              </div>
+              <input type="text" id="vig-dec-key" class="editorial-input" value="GARUDA" />
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-secondary" id="btn-vig-dec">← Dekripsi Vigenère</button>
+            <button type="button" class="btn-ghost" data-copy-target="vig-dec-out">Salin Plaintext</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.75rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Hasil Pemulihan Plaintext</label>
+              <span class="field-hint">Teks Asli</span>
+            </div>
+            <textarea id="vig-dec-out" class="editorial-textarea" readonly style="min-height:92px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry Ribbon -->
+      <div class="telemetry-strip">
+        <div class="telemetry-item">
+          <span class="telemetry-label">SHANNON ENTROPY (IN → OUT)</span>
+          <span class="telemetry-value" id="vig-metric-entropy">4.05 → 4.38</span>
+          <span class="telemetry-sub">Peningkatan kerataan distribusi huruf</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">INDEX OF COINCIDENCE (IoC)</span>
+          <span class="telemetry-value" id="vig-metric-ioc">0.0442</span>
+          <span class="telemetry-sub">Lebih rata dibanding monoalfabetik (~0.07)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">KOMBINASI KUNCI</span>
+          <span class="telemetry-value" id="vig-metric-keyspace">26⁶ (3.08×10⁸)</span>
+          <span class="telemetry-sub">Bergantung panjang kata kunci m</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">WAKTU KOMPUTASI</span>
+          <span class="telemetry-value" id="vig-metric-time">0.11 ms</span>
+          <span class="telemetry-sub">Non-alpha tidak menggeser indeks kunci</span>
+        </div>
+      </div>
+
+      <!-- Tabel Alignment Keystream Karakter demi Karakter -->
+      <div class="inspector-section">
+        <div class="inspector-header">
+          <h2 class="inspector-title">Inspeksi Alignment Keystream Polialfabetik</h2>
+          <span class="inspector-subtitle">Menampilkan pemetaan indeks huruf terang, huruf kunci, nilai shift, dan huruf sandi</span>
+        </div>
+        <div class="editorial-table-wrap">
+          <table class="editorial-table" id="vig-alignment-table">
+            <thead>
+              <tr>
+                <th>Pos</th>
+                <th>Karakter Input</th>
+                <th>Huruf Kunci</th>
+                <th>Shift (+k)</th>
+                <th>Karakter Output</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODUL 03: RC4 STREAM CIPHER
+         ====================================================================== -->
+    <section class="module-section" id="mod-rc4" data-module-index="03">
+      <div class="module-hero">
+        <div>
+          <div class="module-index-tag">MODUL 03 // STREAM CIPHER SIMETRIS MODERN</div>
+          <h1 class="module-headline">RC4 (Rivest Cipher 4)</h1>
+          <p class="module-description">
+            Stream cipher simetris berbasis permutasi array 256-byte (<em>S-Box</em>) melalui dua algoritma inti: <strong>KSA (Key-Scheduling Algorithm)</strong> dan <strong>PRGA (Pseudo-Random Generation Algorithm)</strong> yang di-XOR secara bitwise dengan byte data.
+          </p>
+        </div>
+        <div class="math-specification">
+          <div class="math-spec-label">OPERASI BITWISE STREAM</div>
+          <div class="math-spec-formula">S ← KSA(Key),  K_i ← PRGA(S)</div>
+          <div class="math-spec-formula">C_i = P_i ⊕ K_i  |  P_i = C_i ⊕ K_i</div>
+        </div>
+      </div>
+
+      <div class="workbench-split">
+        <!-- Pane Enkripsi RC4 -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">E</span> ENKRIPSI STREAM RC4</span>
+            <span class="field-hint">Output Hexadecimal & Base64</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="rc4-enc-text">Pesan Teks (Plaintext UTF-8)</label>
+              <span class="field-hint">Byte Stream</span>
+            </div>
+            <textarea id="rc4-enc-text" class="editorial-textarea">Data rahasia transaksi perbankan 2026</textarea>
+          </div>
+
+          <div class="param-row">
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="rc4-enc-key">Kunci Rahasia RC4 (Secret Key)</label>
+                <button type="button" class="btn-ghost" id="btn-toggle-rc4-vis">Tampilkan Kunci</button>
+              </div>
+              <input type="password" id="rc4-enc-key" class="editorial-input" value="SecretKey123!" />
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-primary" id="btn-rc4-enc">Enkripsi Stream RC4 →</button>
+            <button type="button" class="btn-ghost" data-copy-target="rc4-out-hex">Salin Hex</button>
+            <button type="button" class="btn-ghost" data-copy-target="rc4-out-b64">Salin Base64</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.5rem;">
+            <div class="field-label-row">
+              <label class="field-label">Ciphertext (Hexadecimal)</label>
+              <span class="field-hint">Representasi Byte Heksadesimal</span>
+            </div>
+            <input type="text" id="rc4-out-hex" class="editorial-input" readonly />
+          </div>
+
+          <div class="field-group" style="margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Ciphertext (Base64)</label>
+              <span class="field-hint">Standar Transmisi MIME</span>
+            </div>
+            <input type="text" id="rc4-out-b64" class="editorial-input" readonly />
+          </div>
+        </div>
+
+        <!-- Pane Dekripsi RC4 -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">D</span> DEKRIPSI STREAM RC4</span>
+            <span class="field-hint">XOR Keystream Simetris</span>
+          </div>
+
+          <div class="param-row">
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="rc4-dec-format">Format Input Ciphertext</label>
+                <span class="field-hint">Pilih Hex / Base64</span>
+              </div>
+              <select id="rc4-dec-format" class="editorial-select">
+                <option value="hex" selected>Hexadecimal</option>
+                <option value="base64">Base64</option>
+              </select>
+            </div>
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="rc4-dec-key">Kunci Rahasia RC4</label>
+                <span class="field-hint">Auto-Synced</span>
+              </div>
+              <input type="password" id="rc4-dec-key" class="editorial-input" value="SecretKey123!" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="rc4-dec-text">Ciphertext Input</label>
+              <span class="field-hint">Otomatis terisi dari hasil enkripsi</span>
+            </div>
+            <textarea id="rc4-dec-text" class="editorial-textarea" style="min-height:92px;"></textarea>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-secondary" id="btn-rc4-dec">← Dekripsi Stream RC4</button>
+            <button type="button" class="btn-ghost" data-copy-target="rc4-dec-out">Salin Plaintext</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.5rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Plaintext Asli Hasil Dekripsi</label>
+              <span class="field-hint">UTF-8 Decoded</span>
+            </div>
+            <textarea id="rc4-dec-out" class="editorial-textarea" readonly style="min-height:85px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry Strip -->
+      <div class="telemetry-strip">
+        <div class="telemetry-item">
+          <span class="telemetry-label">UKURAN DATA (IN → OUT)</span>
+          <span class="telemetry-value" id="rc4-metric-size">37 B → 37 B</span>
+          <span class="telemetry-sub">Stream cipher tidak menambah ukuran (Zero Padding)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">SHANNON ENTROPY CIPHERTEXT</span>
+          <span class="telemetry-value" id="rc4-metric-entropy">5.12 bits/B</span>
+          <span class="telemetry-sub">Distribusi pseudo-random keystream</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">STATE PERMUTASI S-BOX</span>
+          <span class="telemetry-value">256! State</span>
+          <span class="telemetry-sub">≈ 1684-bit kompleksitas tabel internal</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">WAKTU KOMPUTASI</span>
+          <span class="telemetry-value" id="rc4-metric-time">0.18 ms</span>
+          <span class="telemetry-sub">KSA (256 iterasi) + PRGA XOR</span>
+        </div>
+      </div>
+
+      <!-- Inspeksi Bitwise XOR & S-Box KSA -->
+      <div class="inspector-section">
+        <div class="inspector-header">
+          <h2 class="inspector-title">Inspeksi Operasi Bitwise XOR (P_i ⊕ K_i = C_i) & Keystream PRGA</h2>
+          <span class="inspector-subtitle">Menampilkan 12 byte pertama transformasi biner dan heksadesimal secara langsung</span>
+        </div>
+        <div class="editorial-table-wrap">
+          <table class="editorial-table" id="rc4-xor-table">
+            <thead>
+              <tr>
+                <th>Byte #</th>
+                <th>Char</th>
+                <th>Plaintext (Hex / Bin)</th>
+                <th>⊕ Keystream PRGA (Hex / Bin)</th>
+                <th>= Ciphertext (Hex / Bin)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODUL 04: RSA ASYMMETRIC CIPHER (PKCS#1 OAEP)
+         ====================================================================== -->
+    <section class="module-section" id="mod-rsa" data-module-index="04">
+      <div class="module-hero">
+        <div>
+          <div class="module-index-tag">MODUL 04 // KRIPTOGRAFI ASIMETRIS KUNCI PUBLIK</div>
+          <h1 class="module-headline">RSA PKCS#1 OAEP</h1>
+          <p class="module-description">
+            Kriptografi asimetris menggunakan sepasang kunci matematis berbasis kesulitan pemfaktoran bilangan prima besar: <strong>Public Key (e, n)</strong> untuk mengenkripsi disertai <em>Optimal Asymmetric Encryption Padding (OAEP)</em>, dan <strong>Private Key (d, n)</strong> untuk mendekripsi.
+          </p>
+        </div>
+        <div class="math-specification">
+          <div class="math-spec-label">TRAPDOOR MODULAR EXPONENTIATION</div>
+          <div class="math-spec-formula">n = p × q,  φ(n) = (p−1)(q−1)</div>
+          <div class="math-spec-formula">C ≡ M^e mod n  |  M ≡ C^d mod n</div>
+        </div>
+      </div>
+
+      <!-- Generator Pasangan Kunci RSA -->
+      <div class="inspector-section" style="padding-top:0; margin-bottom:2rem;">
+        <div class="inspector-header">
+          <div>
+            <h2 class="inspector-title">Generator Pasangan Kunci Asimetris (Keypair Studio)</h2>
+            <span class="inspector-subtitle" id="rsa-key-spec-summary">Modulus Aktif: 2048-bit (256 byte per blok, maks 214 byte data per chunk OAEP)</span>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:center;">
+            <select id="rsa-bits-select" class="editorial-select" style="width:155px; padding:0.5rem 0.75rem;">
+              <option value="1024">1024-bit RSA</option>
+              <option value="2048" selected>2048-bit RSA</option>
+            </select>
+            <button type="button" class="btn-secondary" id="btn-rsa-generate">Generate Keypair Baru ↻</button>
+          </div>
+        </div>
+
+        <div class="param-row" style="margin-bottom:0;">
+          <div>
+            <div class="field-label-row">
+              <label class="field-label" for="rsa-pub-pem">Public Key Penerima (PEM — Untuk Enkripsi)</label>
+              <button type="button" class="btn-ghost" data-copy-target="rsa-pub-pem">Salin Public Key</button>
+            </div>
+            <textarea id="rsa-pub-pem" class="editorial-textarea" style="min-height:115px; font-size:0.75rem;"></textarea>
+          </div>
+          <div>
+            <div class="field-label-row">
+              <label class="field-label" for="rsa-priv-pem">Private Key Pemilik (PEM — Untuk Dekripsi)</label>
+              <button type="button" class="btn-ghost" data-copy-target="rsa-priv-pem">Salin Private Key</button>
+            </div>
+            <textarea id="rsa-priv-pem" class="editorial-textarea" style="min-height:115px; font-size:0.75rem;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Enkripsi & Dekripsi RSA -->
+      <div class="workbench-split">
+        <!-- Pane Enkripsi RSA -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">E</span> ENKRIPSI DENGAN PUBLIC KEY</span>
+            <span class="field-hint">Multi-Chunk OAEP Otomatis</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="rsa-enc-text">Plaintext Pesan</label>
+              <span class="field-hint">Mendukung teks panjang (auto-chunking)</span>
+            </div>
+            <textarea id="rsa-enc-text" class="editorial-textarea">Kerahasiaan data menggunakan RSA 2048-bit</textarea>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-primary" id="btn-rsa-enc">Enkripsi dengan Public Key →</button>
+            <button type="button" class="btn-ghost" data-copy-target="rsa-enc-out">Salin Base64</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.5rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Ciphertext RSA (Base64)</label>
+              <span class="field-hint">Probabilistik (Berbeda tiap klik karena seed acak OAEP)</span>
+            </div>
+            <textarea id="rsa-enc-out" class="editorial-textarea" readonly style="min-height:110px; font-size:0.78rem;"></textarea>
+          </div>
+        </div>
+
+        <!-- Pane Dekripsi RSA -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">D</span> DEKRIPSI DENGAN PRIVATE KEY</span>
+            <span class="field-hint">Validasi Kunci Privat Ketat</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="rsa-dec-text">Ciphertext RSA (Base64)</label>
+              <span class="field-hint">Otomatis disinkronkan dari Enkripsi</span>
+            </div>
+            <textarea id="rsa-dec-text" class="editorial-textarea" style="min-height:110px; font-size:0.78rem;"></textarea>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-secondary" id="btn-rsa-dec">← Dekripsi dengan Private Key</button>
+            <button type="button" class="btn-ghost" data-copy-target="rsa-dec-out">Salin Plaintext</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.5rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Plaintext Asli Hasil Dekripsi</label>
+              <span class="field-hint">OAEP Unpadded</span>
+            </div>
+            <textarea id="rsa-dec-out" class="editorial-textarea" readonly style="min-height:92px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry Strip -->
+      <div class="telemetry-strip">
+        <div class="telemetry-item">
+          <span class="telemetry-label">PANJANG MODULUS (n)</span>
+          <span class="telemetry-value" id="rsa-metric-bits">2048-bit</span>
+          <span class="telemetry-sub" id="rsa-metric-digits">617 digit desimal</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">EKSPONEN PUBLIK (e)</span>
+          <span class="telemetry-value" id="rsa-metric-exp">65537</span>
+          <span class="telemetry-sub">Prima Fermat F₄ standar industri</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">SHANNON ENTROPY CIPHERTEXT</span>
+          <span class="telemetry-value" id="rsa-metric-entropy">7.24 bits/B</span>
+          <span class="telemetry-sub">Mendekati entropi maksimum ideal (8.0)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">JUMLAH BLOK OAEP</span>
+          <span class="telemetry-value" id="rsa-metric-chunks">1 Blok (256 B)</span>
+          <span class="telemetry-sub" id="rsa-metric-time">Eksekusi: 1.85 ms</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODUL 05: SUPER ENKRIPSI (4-LAYER DEFENSE-IN-DEPTH PIPELINE)
+         ====================================================================== -->
+    <section class="module-section" id="mod-super" data-module-index="05">
+      <div class="module-hero">
+        <div>
+          <div class="module-index-tag">MODUL 05 // MULTI-LAYER DEFENSE IN DEPTH PIPELINE</div>
+          <h1 class="module-headline">Super Enkripsi (4-Lapis)</h1>
+          <p class="module-description">
+            Arsitektur enkripsi berlapis berantai yang menggabungkan kriptografi klasik dan modern secara sekuensial:
+            <strong>Plaintext → 1. Caesar → 2. Vigenère → 3. RC4 Stream → 4. RSA PKCS#1 OAEP → Ciphertext Akhir</strong>.
+          </p>
+        </div>
+        <div class="math-specification">
+          <div class="math-spec-label">KOMPOSISI FUNGSI BERANTAI</div>
+          <div class="math-spec-formula">C = E_RSA( E_RC4( E_Vig( E_Caesar(P) ) ) )</div>
+          <div class="math-spec-formula">P = D_Caesar( D_Vig( D_RC4( D_RSA(C) ) ) )</div>
+        </div>
+      </div>
+
+      <!-- Konfigurasi Keempat Kunci Terpadu -->
+      <div class="inspector-section" style="padding-top:0;">
+        <div class="inspector-header">
+          <h2 class="inspector-title">Konfigurasi Parameter 4 Lapis Kunci</h2>
+          <span class="inspector-subtitle">Perubahan kunci pada saat Super Enkripsi otomatis menyinkronkan kunci pada sisi Super Dekripsi</span>
+        </div>
+
+        <div class="param-row" style="margin-bottom:0;">
+          <div>
+            <div class="field-label-row">
+              <label class="field-label" for="super-shift">Lapis 1: Caesar Shift (1–25)</label>
+            </div>
+            <input type="number" id="super-shift" class="editorial-input" min="1" max="25" value="7" />
+          </div>
+          <div>
+            <div class="field-label-row">
+              <label class="field-label" for="super-vig-key">Lapis 2: Vigenère Key</label>
+            </div>
+            <input type="text" id="super-vig-key" class="editorial-input" value="NUSANTARA" />
+          </div>
+          <div>
+            <div class="field-label-row">
+              <label class="field-label" for="super-rc4-key">Lapis 3: RC4 Secret Key</label>
+            </div>
+            <input type="text" id="super-rc4-key" class="editorial-input" value="KunciStreamRC42026" />
+          </div>
+          <div>
+            <div class="field-label-row">
+              <label class="field-label">Lapis 4: Pasangan Kunci RSA</label>
+              <span class="field-hint">Terhubung dengan Keypair Studio</span>
+            </div>
+            <button type="button" class="btn-secondary" id="btn-super-regen-rsa" style="width:100%;">Rotasi Kunci RSA Baru ↻</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Eksekusi Super Enkripsi & Super Dekripsi -->
+      <div class="workbench-split">
+        <!-- Pane Super Enkripsi -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">E</span> EKSEKUSI SUPER ENKRIPSI (4 TAHAP)</span>
+            <span class="field-hint">Forward Pipeline</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="super-enc-text">Pesan Rahasia (Plaintext)</label>
+            </div>
+            <textarea id="super-enc-text" class="editorial-textarea">Dokumen rahasia intelijen negara: koordinat operasi telah dipindahkan ke sektor 7.</textarea>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-primary" id="btn-super-enc">Jalankan Super Enkripsi 4-Lapis →</button>
+            <button type="button" class="btn-ghost" data-copy-target="super-enc-out">Salin Final Ciphertext</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.5rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Ciphertext Akhir (Base64)</label>
+              <span class="field-hint">Output Tahap 4 (RSA-OAEP)</span>
+            </div>
+            <textarea id="super-enc-out" class="editorial-textarea" readonly style="min-height:105px; font-size:0.78rem;"></textarea>
+          </div>
+        </div>
+
+        <!-- Pane Super Dekripsi -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">D</span> EKSEKUSI SUPER DEKRIPSI (PEMBALIKAN 4 TAHAP)</span>
+            <span class="field-hint">Reverse Pipeline</span>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <label class="field-label" for="super-dec-text">Ciphertext Super Enkripsi (Base64)</label>
+              <span class="field-hint">Auto-Synced</span>
+            </div>
+            <textarea id="super-dec-text" class="editorial-textarea" style="min-height:105px; font-size:0.78rem;"></textarea>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-secondary" id="btn-super-dec">← Jalankan Super Dekripsi</button>
+            <button type="button" class="btn-ghost" data-copy-target="super-dec-out">Salin Plaintext</button>
+          </div>
+
+          <div class="field-group" style="margin-top:1.5rem; margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Pesan Asli yang Dipulihkan (Plaintext)</label>
+              <span class="field-hint">Terverifikasi 4 Lapis</span>
+            </div>
+            <textarea id="super-dec-out" class="editorial-textarea" readonly style="min-height:105px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visualisasi Step-by-Step Transformasi Pipeline -->
+      <div class="inspector-section">
+        <div class="inspector-header">
+          <h2 class="inspector-title">anatomi Transformasi Pipeline (Step-by-Step Inspection)</h2>
+          <span class="inspector-subtitle" id="super-pipeline-mode-label">Menampilkan perubahan wujud pesan dan lonjakan entropi di setiap lapisan</span>
+        </div>
+        <div class="pipeline-timeline" id="super-pipeline-timeline"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODUL 06: MULTIMEDIA & FILE VAULT (GAMBAR, AUDIO, DOKUMEN, BINER)
+         ====================================================================== -->
+    <section class="module-section" id="mod-media" data-module-index="06">
+      <div class="module-hero">
+        <div>
+          <div class="module-index-tag">MODUL 06 // ENKRIPSI & DEKRIPSI FILE MULTIMEDIA UNIVERSAL</div>
+          <h1 class="module-headline">File, Image & Audio Vault</h1>
+          <p class="module-description">
+            Enkripsi dan dekripsi file biner apa pun — <strong>Gambar (PNG/JPG/WebP), Audio (WAV/MP3), Dokumen (PDF/DOCX/ZIP)</strong> — menggunakan salah satu dari 5 algoritma kriptografi dengan verifikasi keutuhan <strong>SHA-256 Checksum</strong> otomatis.
+          </p>
+        </div>
+        <div class="math-specification">
+          <div class="math-spec-label">ARSITEKTUR KONTAINER BINER</div>
+          <div class="math-spec-formula">ECRY2 Header + JSON Meta + Payload</div>
+          <div class="math-spec-formula">Integrity: SHA-256(Plain) == SHA-256(Dec)</div>
+        </div>
+      </div>
+
+      <!-- Baris Generator Sampel Instan (Untuk Demo di Depan Dosen Tanpa Perlu Cari File) -->
+      <div class="inspector-section" style="padding-top:0; padding-bottom:1.5rem;">
+        <div class="field-label-row">
+          <span class="field-label">GENERATOR FILE SAMPEL INSTAN (UNTUK DEMO LANGSUNG DI DEPAN DOSEN)</span>
+          <span class="field-hint">Klik salah satu untuk langsung memuat file uji ke dalam brankas</span>
+        </div>
+        <div class="action-bar" style="margin-top:0.5rem;">
+          <button type="button" class="btn-secondary" id="btn-sample-image">Muat Sampel Gambar ( Seal Kriptografi PNG )</button>
+          <button type="button" class="btn-secondary" id="btn-sample-audio">Muat Sampel Audio ( Sinyal Harmonik WAV )</button>
+          <button type="button" class="btn-secondary" id="btn-sample-doc">Muat Sampel Dokumen ( Kontrak Rahasia TXT )</button>
+        </div>
+      </div>
+
+      <div class="workbench-split">
+        <!-- Pane Input File & Parameter -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">1</span> PILIH FILE & ALGORITMA</span>
+            <span class="field-hint" id="media-file-size-badge">Belum ada file</span>
+          </div>
+
+          <div class="media-dropzone" id="media-dropzone">
+            <input type="file" id="media-file-input" style="display:none;" />
+            <div style="font-family:'Instrument Serif', serif; font-size:1.5rem; margin-bottom:0.35rem;" id="media-drop-title">
+              Tarik & Lepas File ke Sini, atau Klik untuk Memilih
+            </div>
+            <div class="field-hint" id="media-drop-sub">
+              Mendukung Gambar (PNG, JPG, GIF), Audio (WAV, MP3), PDF, Dokumen, maupun File `.ecry` hasil enkripsi
+            </div>
+          </div>
+
+          <!-- Pratinjau File Input -->
+          <div class="media-preview-box" id="media-input-preview" style="display:none;"></div>
+
+          <div class="param-row" style="margin-top:1.5rem;">
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="media-algo-select">Teknik Kriptografi</label>
+              </div>
+              <select id="media-algo-select" class="editorial-select">
+                <option value="super" selected>5. Super Enkripsi (4-Lapis Berantai)</option>
+                <option value="rc4">3. RC4 Stream Cipher (Kecepatan Tinggi)</option>
+                <option value="rsa">4. RSA PKCS#1 OAEP (Hybrid Digital Envelope)</option>
+                <option value="vigenere">2. Vigenère Cipher (Modulo-256 Byte)</option>
+                <option value="caesar">1. Caesar Cipher (Modulo-256 Byte)</option>
+              </select>
+            </div>
+            <div>
+              <div class="field-label-row">
+                <label class="field-label" for="media-secret-key">Kunci Kriptografi / Passphrase</label>
+              </div>
+              <input type="text" id="media-secret-key" class="editorial-input" value="NUSANTARA2026" />
+            </div>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="btn-primary" id="btn-media-encrypt">Enkripsi File ke Kontainer (.ecry) →</button>
+            <button type="button" class="btn-secondary" id="btn-media-decrypt">← Dekripsi & Pulihkan File Asli</button>
+          </div>
+        </div>
+
+        <!-- Pane Hasil Enkripsi / Dekripsi File & Inspeksi Hex -->
+        <div class="workbench-pane">
+          <div class="pane-header">
+            <span class="pane-title"><span class="pane-step-num">2</span> HASIL PEMROSESAN & AUDIT SHA-256</span>
+            <span class="field-hint" id="media-status-badge">Siap Memproses</span>
+          </div>
+
+          <div id="media-output-summary" style="padding:1.25rem; background:var(--bg-surface); border-left:2px solid var(--text-primary); margin-bottom:1.5rem;">
+            <div class="field-label" id="media-out-headline">Menunggu Eksekusi File</div>
+            <p class="field-hint" id="media-out-details" style="margin-top:0.35rem;">
+              Pilih file atau gunakan tombol sampel di atas, lalu klik Enkripsi atau Dekripsi.
+            </p>
+            <div class="action-bar" id="media-download-bar" style="display:none; margin-top:1rem;">
+              <a id="media-download-link" class="btn-primary" download="output.ecry" style="text-decoration:none;">Unduh File Hasil ↓</a>
+              <button type="button" class="btn-secondary" id="btn-media-loopback">Uji Dekripsi File Ini Secara Langsung ↺</button>
+            </div>
+          </div>
+
+          <!-- Pratinjau Visual Hasil Dekripsi (Gambar / Audio / Teks) -->
+          <div class="media-preview-box" id="media-output-preview" style="display:none; margin-bottom:1.5rem;"></div>
+
+          <div class="field-group" style="margin-bottom:0;">
+            <div class="field-label-row">
+              <label class="field-label">Inspeksi Byte Header (Hex Dump 96 Byte Pertama)</label>
+              <span class="field-hint">Perbandingan Magic Bytes File</span>
+            </div>
+            <textarea id="media-hex-dump" class="editorial-textarea" readonly style="min-height:110px; font-size:0.74rem;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry File -->
+      <div class="telemetry-strip">
+        <div class="telemetry-item">
+          <span class="telemetry-label">SHANNON ENTROPY FILE</span>
+          <span class="telemetry-value" id="media-metric-entropy">— → —</span>
+          <span class="telemetry-sub">Maksimum teoretis file acak = 8.0000 bits/byte</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">CHECKSUM INTEGRITAS SHA-256</span>
+          <span class="telemetry-value" id="media-metric-sha" style="font-size:0.95rem;">—</span>
+          <span class="telemetry-sub" id="media-metric-verify">Menunggu verifikasi</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">METODE ENKRIPSI BINER</span>
+          <span class="telemetry-value" id="media-metric-mode" style="font-size:0.95rem;">Multi-Layer</span>
+          <span class="telemetry-sub" id="media-metric-time">0.00 ms</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODUL 07: LABORATORIUM AUDIT KEAMANAN & KRIPTANALISIS (PRESENTASI DOSEN)
+         ====================================================================== -->
+    <section class="module-section" id="mod-audit" data-module-index="07">
+      <div class="module-hero">
+        <div>
+          <div class="module-index-tag">MODUL 07 // ANALISIS STATISTIK, AVALANCHE EFFECT & KRIPTANALISIS</div>
+          <h1 class="module-headline">Security Audit & Cryptanalysis Lab</h1>
+          <p class="module-description">
+            Modul pembuktian ilmiah untuk presentasi akademik: membandingkan <strong>Entropi Informasi Shannon</strong>, <strong>Avalanche Effect (sensitivitas perubahan 1-bit)</strong>, <strong>Index of Coincidence (IoC)</strong>, serta demonstrasi pembobolan otomatis <strong>Brute-Force Attack</strong> pada sandi klasik.
+          </p>
+        </div>
+        <div class="math-specification">
+          <div class="math-spec-label">METRIK EVALUASI KRIPTOGRAFI</div>
+          <div class="math-spec-formula">H(X) = −∑ P(x_i) log₂ P(x_i)</div>
+          <div class="math-spec-formula">Avalanche = Hamming(C₁, C₂) / |C|</div>
+        </div>
+      </div>
+
+      <div class="inspector-section" style="padding-top:0;">
+        <div class="field-group">
+          <div class="field-label-row">
+            <label class="field-label" for="audit-input-text">Sampel Plaintext untuk Pengujian Komparatif 5 Algoritma</label>
+            <span class="field-hint">Sistem akan menguji perubahan 1-bit pada karakter pertama secara otomatis</span>
+          </div>
+          <div style="display:flex; gap:1rem; align-items:flex-start;">
+            <textarea id="audit-input-text" class="editorial-textarea" style="min-height:76px;">Dokumen rahasia intelijen negara: koordinat operasi telah dipindahkan ke sektor 7.</textarea>
+            <button type="button" class="btn-primary" id="btn-run-audit" style="white-space:nowrap; height:52px;">Jalankan Audit Komprehensif →</button>
+          </div>
+        </div>
+
+        <!-- Tabel Komparasi 5 Algoritma -->
+        <div class="inspector-header" style="margin-top:2rem;">
+          <h2 class="inspector-title">Matriks Benchmark Keamanan 5 Algoritma</h2>
+          <span class="inspector-subtitle">Perbandingan Entropi Shannon (0–8 bits/B), Avalanche Effect (%), Index of Coincidence, dan Ruang Kunci</span>
+        </div>
+        <div class="editorial-table-wrap">
+          <table class="editorial-table" id="audit-benchmark-table">
+            <thead>
+              <tr>
+                <th>Algoritma</th>
+                <th>Kategori Arsitektur</th>
+                <th>Entropi Shannon</th>
+                <th>Avalanche Effect (1-bit flip)</th>
+                <th>Index of Coincidence</th>
+                <th>Ukuran Output</th>
+                <th>Evaluasi Ketahanan</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grafik Perbandingan Distribusi Frekuensi Huruf (Plaintext vs Caesar vs Vigenere) -->
+      <div class="inspector-section">
+        <div class="inspector-header">
+          <h2 class="inspector-title">Distribusi Frekuensi Huruf (A–Z): Mengapa Sandi Klasik Rentan?</h2>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn-secondary freq-switch-btn" data-freq-mode="plain">1. Plaintext Asli</button>
+            <button type="button" class="btn-secondary freq-switch-btn" data-freq-mode="caesar">2. Caesar (Hanya Bergeser)</button>
+            <button type="button" class="btn-secondary freq-switch-btn" data-freq-mode="vigenere">3. Vigenère (Merata)</button>
+          </div>
+        </div>
+        <p class="field-hint" id="audit-freq-explanation" style="margin-bottom:1rem;">
+          Pada Caesar Cipher, puncak frekuensi huruf (seperti huruf 'A', 'I', 'N', 'E') hanya bergeser posisi ke kanan, sehingga mudah ditebak. Pada Vigenère, distribusi menjadi lebih datar.
+        </p>
+        <div class="freq-bars-wrap" id="audit-freq-chart"></div>
+      </div>
+
+      <!-- Simulator Serangan Brute-Force Caesar -->
+      <div class="inspector-section" style="border-bottom:none;">
+        <div class="inspector-header">
+          <h2 class="inspector-title">Simulator Serangan Exhaustive Brute-Force (Caesar Cryptanalysis)</h2>
+          <span class="inspector-subtitle">Membongkar seluruh 25 kunci Caesar secara instan dan memberi peringkat heuristik bahasa alami</span>
+        </div>
+        <div class="editorial-table-wrap">
+          <table class="editorial-table" id="audit-bruteforce-table">
+            <thead>
+              <tr>
+                <th>Peringkat</th>
+                <th>Kunci Shift Dicoba</th>
+                <th>Kandidat Plaintext Terbuka</th>
+                <th>Skor Heuristik Bahasa</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       FLOATING LIQUID GLASS DOCK (MACOS / IOS STYLE)
+       ======================================================================== -->
+  <nav class="liquid-dock-wrapper" aria-label="Navigasi Modul Kriptografi">
+    <div class="liquid-dock" id="liquid-dock">
+      <button type="button" class="dock-item active" data-target="mod-caesar" data-name="01 / Caesar Cipher" data-spec="Substitusi Monoalfabetik · Z₂₆ Ring">
+        <span class="dock-item-num">01</span>
+        <span>Caesar</span>
+      </button>
+      <button type="button" class="dock-item" data-target="mod-vigenere" data-name="02 / Vigenère Cipher" data-spec="Substitusi Polialfabetik · Keystream">
+        <span class="dock-item-num">02</span>
+        <span>Vigenère</span>
+      </button>
+      <button type="button" class="dock-item" data-target="mod-rc4" data-name="03 / RC4 Stream" data-spec="Simetris KSA + PRGA Bitwise XOR">
+        <span class="dock-item-num">03</span>
+        <span>RC4 Stream</span>
+      </button>
+      <button type="button" class="dock-item" data-target="mod-rsa" data-name="04 / RSA Asymmetric" data-spec="Public-Key PKCS#1 OAEP · 2048-bit">
+        <span class="dock-item-num">04</span>
+        <span>RSA OAEP</span>
+      </button>
+      <button type="button" class="dock-item" data-target="mod-super" data-name="05 / Super Enkripsi" data-spec="Pipeline Berantai 4-Lapis (Defense in Depth)">
+        <span class="dock-item-num">05</span>
+        <span>Super Enkripsi</span>
+      </button>
+      <div class="dock-divider" aria-hidden="true"></div>
+      <button type="button" class="dock-item" data-target="mod-media" data-name="06 / File & Media Vault" data-spec="Enkripsi Gambar, Audio & Dokumen + SHA-256">
+        <span class="dock-item-num">06</span>
+        <span>File / Media Vault</span>
+      </button>
+      <button type="button" class="dock-item" data-target="mod-audit" data-name="07 / Security Audit Lab" data-spec="Shannon Entropy · Avalanche · Brute-Force">
+        <span class="dock-item-num">07</span>
+        <span>Audit & Kriptanalisis</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       MODAL PANDUAN PRESENTASI SIDANG / DOSEN
+       ======================================================================== -->
+  <div class="modal-backdrop" id="defense-modal">
+    <div class="modal-sheet">
+      <div class="inspector-header" style="border-bottom:1px solid var(--border-hairline); padding-bottom:1rem;">
+        <div>
+          <div class="module-index-tag">DOKUMEN PENDAMPING PRESENTASI AKADEMIK</div>
+          <h2 class="inspector-title">Poin Kunci Penilaian di Depan Dosen Penguji</h2>
+        </div>
+        <button type="button" class="btn-secondary" id="btn-close-defense">Tutup ✕</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:1.5rem;">
+        <div>
+          <h3 class="field-label" style="margin-bottom:0.5rem;">1. Kepatuhan Aturan Kriptografi</h3>
+          <p class="field-hint" style="line-height:1.65; margin-bottom:1.25rem;">
+            • <strong>Caesar & Vigenère:</strong> Hanya menggeser alfabet Latin (A–Z, a–z) di dalam ring modulo 26. Pada Vigenère, karakter non-alfabet tidak mengonsumsi indeks kunci sehingga sinkronisasi kata kunci terjaga.<br/>
+            • <strong>RC4 Stream Cipher:</strong> Mengimplementasikan <em>Key-Scheduling Algorithm (KSA)</em> untuk pengacakan S-Box 256-byte dan <em>PRGA</em> untuk menghasilkan keystream XOR.<br/>
+            • <strong>RSA PKCS#1 OAEP:</strong> Menggunakan padding OAEP probabilistik (sehingga plaintext yang sama menghasilkan ciphertext berbeda setiap kali dienkripsi) serta mendukung auto-chunking dan validasi kunci privat.
+          </p>
+
+          <h3 class="field-label" style="margin-bottom:0.5rem;">2. Mengapa Ada Super Enkripsi 4-Lapis?</h3>
+          <p class="field-hint" style="line-height:1.65;">
+            Prinsip <em>Defense in Depth</em> (Shannon's Confusion & Diffusion): lapisan klasik mengaburkan struktur linguistik awal, RC4 menyebarkan bit secara merata (XOR stream), dan RSA-OAEP mengamankan hasil akhirnya dengan kriptografi kunci publik asimetris.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="field-label" style="margin-bottom:0.5rem;">3. Arsitektur Enkripsi File, Gambar & Audio</h3>
+          <p class="field-hint" style="line-height:1.65; margin-bottom:1.25rem;">
+            • Untuk file berukuran besar pada mode RSA/Super, sistem menerapkan standar industri <strong>Hybrid Digital Envelope</strong> (RSA-OAEP mengenkripsi 256-bit Session Key acak, diikuti stream encryption untuk payload), sehingga file gambar/audio berukuran megabyte selesai dienkripsi dalam hitungan milidetik.<br/>
+            • Setiap file dibungkus dalam kontainer <code>.ecry</code> yang menyimpan hash <strong>SHA-256</strong> asli untuk memverifikasi keutuhan file (Integrity Check) saat didekripsi.
+          </p>
+
+          <h3 class="field-label" style="margin-bottom:0.5rem;">4. Metrik Evaluasi Keamanan</h3>
+          <p class="field-hint" style="line-height:1.65;">
+            • <strong>Shannon Entropy:</strong> Mengukur keacakan informasi (0 hingga 8 bits/byte).<br/>
+            • <strong>Avalanche Effect:</strong> Mengukur persentase bit ciphertext yang berubah saat plaintext diubah 1 bit (standar kriptografi modern mendekati ~50%).<br/>
+            • <strong>Index of Coincidence (IoC):</strong> Membuktikan secara matematis kerentanan sandi klasik terhadap analisis frekuensi.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
