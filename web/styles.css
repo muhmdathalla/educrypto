@@ -994,11 +994,12 @@ body {
 /* Super Enkripsi Pipeline Timeline */
 .pipeline-timeline {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.25rem;
   margin-top: 1.5rem;
 }
 
+.pipeline-stage,
 .pipeline-step-card {
   padding: 1.35rem;
   background: var(--bg-secondary);
@@ -1006,23 +1007,27 @@ body {
   border-radius: 14px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 0.85rem;
 }
 
+.stage-badge,
 .pipeline-step-num {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--text-muted);
-  margin-bottom: 0.4rem;
-}
-
-.pipeline-step-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 0.75rem;
   color: var(--text-primary);
+  margin-bottom: 0.35rem;
 }
 
+.stage-desc,
+.pipeline-step-name {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.stage-output-code,
 .pipeline-step-output {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.74rem;
@@ -1031,9 +1036,14 @@ body {
   border-radius: 8px;
   border: 1px solid var(--border-hairline);
   word-break: break-all;
-  max-height: 90px;
+  max-height: 85px;
   overflow-y: auto;
-  margin-bottom: 0.65rem;
+  color: var(--text-primary);
+}
+
+.stage-entropy-meter {
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border-hairline);
 }
 
 .pipeline-step-meta {
@@ -1109,7 +1119,8 @@ body {
   transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.freq-bar-letter {
+.freq-bar-letter,
+.freq-bar-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.68rem;
   color: var(--text-secondary);

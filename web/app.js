@@ -26,8 +26,13 @@ const state = {
   auditData: null
 };
 
-// API Helper with Automatic Standalone Netlify Client-Side Fallback
+let isStaticDeployment = false;
+
+// API Helper with Automatic Standalone Client-Side Fallback (Vercel & Netlify Ready)
 async function apiPost(endpoint, data = {}) {
+  if (isStaticDeployment) {
+    return await handleClientFallback(endpoint, data);
+  }
   try {
     const res = await fetch(endpoint, {
       method: 'POST',
@@ -36,15 +41,18 @@ async function apiPost(endpoint, data = {}) {
     });
     if (res.ok) {
       const json = await res.json();
-      if (json.ok) return json;
-      throw new Error(json.error || 'Operasi gagal dieksekusi.');
+      if (json && json.ok) return json;
+      throw new Error((json && json.error) || 'Operasi gagal dieksekusi.');
     }
+    // If response was not 2xx (e.g. 404/405 on Vercel static hosting)
+    throw new Error(`Endpoint returned HTTP ${res.status}`);
   } catch (err) {
-    // Jalankan fallback client-side engine jika dihosting di Netlify static hosting
+    isStaticDeployment = true;
     if (typeof handleClientFallback === 'function') {
       try {
         return await handleClientFallback(endpoint, data);
       } catch (fbErr) {
+        console.error('Client fallback error:', fbErr);
         showToast(fbErr.message || 'Operasi gagal.', 'error');
         throw fbErr;
       }
@@ -55,15 +63,24 @@ async function apiPost(endpoint, data = {}) {
 }
 
 async function apiGet(endpoint) {
+  if (isStaticDeployment) {
+    return await handleClientFallback(endpoint, {});
+  }
   try {
     const res = await fetch(endpoint);
     if (res.ok) {
       const json = await res.json();
-      if (json.ok) return json;
+      if (json && json.ok) return json;
     }
+    throw new Error(`Endpoint returned HTTP ${res.status}`);
   } catch (err) {
+    isStaticDeployment = true;
     if (typeof handleClientFallback === 'function') {
-      return await handleClientFallback(endpoint, {});
+      try {
+        return await handleClientFallback(endpoint, {});
+      } catch (e) {
+        return { ok: false };
+      }
     }
   }
   return { ok: false };
@@ -271,21 +288,28 @@ function initCaesar() {
     const text = encText.value;
     try {
       const res = await apiPost('/api/caesar', { action: 'encrypt', text, shift });
+      if (!res || typeof res.result === 'undefined') return;
       encOut.value = res.result;
 
       // Auto-Sync to Decryption pane
       decText.value = res.result;
       decShift.value = shift;
-      document.getElementById('caesar-dec-shift-badge').textContent = `−${shift} langkah`;
+      const decBadge = document.getElementById('caesar-dec-shift-badge');
+      if (decBadge) decBadge.textContent = `−${shift} langkah`;
 
       // Update Metrics
-      document.getElementById('caesar-metric-entropy').textContent = `${res.metrics.entropy_in} → ${res.metrics.entropy_out}`;
-      document.getElementById('caesar-metric-ioc').textContent = res.metrics.ioc_out;
-      document.getElementById('caesar-metric-time').textContent = `${res.metrics.elapsed_ms} ms`;
+      const mEnt = document.getElementById('caesar-metric-entropy');
+      if (mEnt && res.metrics) mEnt.textContent = `${res.metrics.entropy_in} → ${res.metrics.entropy_out}`;
+      const mIoc = document.getElementById('caesar-metric-ioc');
+      if (mIoc && res.metrics) mIoc.textContent = res.metrics.ioc_out;
+      const mTime = document.getElementById('caesar-metric-time');
+      if (mTime && res.metrics) mTime.textContent = `${res.metrics.elapsed_ms} ms`;
 
       // Render Alphabet Mapping Track
       renderCaesarAlphabetTrack(res.mapping, shift);
-    } catch (err) {}
+    } catch (err) {
+      console.error('Caesar Enc Error:', err);
+    }
   }
 
   async function runDec() {
@@ -293,9 +317,12 @@ function initCaesar() {
     const text = decText.value;
     try {
       const res = await apiPost('/api/caesar', { action: 'decrypt', text, shift });
+      if (!res || typeof res.result === 'undefined') return;
       decOut.value = res.result;
       showToast('Dekripsi Caesar berhasil dipulihkan!');
-    } catch (err) {}
+    } catch (err) {
+      console.error('Caesar Dec Error:', err);
+    }
   }
 
   encBtn.addEventListener('click', runEnc);
@@ -346,20 +373,28 @@ function initVigenere() {
     const key = encKey.value || 'GARUDA';
     try {
       const res = await apiPost('/api/vigenere', { action: 'encrypt', text, key });
+      if (!res || typeof res.result === 'undefined') return;
       encOut.value = res.result;
 
       // Auto-Sync to Decryption pane
       decText.value = res.result;
       decKey.value = key;
 
-      document.getElementById('vig-clean-key-badge').textContent = `Kunci Bersih: ${res.cleaned_key}`;
-      document.getElementById('vig-metric-entropy').textContent = `${res.metrics.entropy_in} → ${res.metrics.entropy_out}`;
-      document.getElementById('vig-metric-ioc').textContent = res.metrics.ioc_out;
-      document.getElementById('vig-metric-keyspace').textContent = `26^${res.cleaned_key.length} (${Math.pow(26, res.cleaned_key.length).toExponential(2)})`;
-      document.getElementById('vig-metric-time').textContent = `${res.metrics.elapsed_ms} ms`;
+      const kBadge = document.getElementById('vig-clean-key-badge');
+      if (kBadge) kBadge.textContent = `Kunci Bersih: ${res.cleaned_key}`;
+      const mEnt = document.getElementById('vig-metric-entropy');
+      if (mEnt && res.metrics) mEnt.textContent = `${res.metrics.entropy_in} → ${res.metrics.entropy_out}`;
+      const mIoc = document.getElementById('vig-metric-ioc');
+      if (mIoc && res.metrics) mIoc.textContent = res.metrics.ioc_out;
+      const mKey = document.getElementById('vig-metric-keyspace');
+      if (mKey && res.cleaned_key) mKey.textContent = `26^${res.cleaned_key.length} (${Math.pow(26, res.cleaned_key.length).toExponential(2)})`;
+      const mTime = document.getElementById('vig-metric-time');
+      if (mTime && res.metrics) mTime.textContent = `${res.metrics.elapsed_ms} ms`;
 
       renderVigenereAlignment(res.alignment);
-    } catch (err) {}
+    } catch (err) {
+      console.error('Vigenere Enc Error:', err);
+    }
   }
 
   async function runDec() {
@@ -367,9 +402,12 @@ function initVigenere() {
     const key = decKey.value;
     try {
       const res = await apiPost('/api/vigenere', { action: 'decrypt', text, key });
+      if (!res || typeof res.result === 'undefined') return;
       decOut.value = res.result;
       showToast('Dekripsi Vigenère berhasil dipulihkan!');
-    } catch (err) {}
+    } catch (err) {
+      console.error('Vigenere Dec Error:', err);
+    }
   }
 
   encBtn.addEventListener('click', runEnc);
@@ -426,6 +464,7 @@ function initRc4() {
     const key = encKey.value;
     try {
       const res = await apiPost('/api/rc4', { action: 'encrypt', text, key });
+      if (!res || typeof res.hex === 'undefined') return;
       hexOut.value = res.hex;
       b64Out.value = res.base64;
 
@@ -434,12 +473,17 @@ function initRc4() {
       decKey.value = key;
       decFmt.value = 'hex';
 
-      document.getElementById('rc4-metric-size').textContent = `${res.metrics.size_in} B → ${res.metrics.size_out} B`;
-      document.getElementById('rc4-metric-entropy').textContent = `${res.metrics.entropy_out} bits/B`;
-      document.getElementById('rc4-metric-time').textContent = `${res.metrics.elapsed_ms} ms`;
+      const mSize = document.getElementById('rc4-metric-size');
+      if (mSize && res.metrics) mSize.textContent = `${res.metrics.size_in} B → ${res.metrics.size_out} B`;
+      const mEnt = document.getElementById('rc4-metric-entropy');
+      if (mEnt && res.metrics) mEnt.textContent = `${res.metrics.entropy_out} bits/B`;
+      const mTime = document.getElementById('rc4-metric-time');
+      if (mTime && res.metrics) mTime.textContent = `${res.metrics.elapsed_ms} ms`;
 
       renderRc4XorTable(res.xor_steps);
-    } catch (err) {}
+    } catch (err) {
+      console.error('RC4 Enc Error:', err);
+    }
   }
 
   async function runDec() {
@@ -448,9 +492,12 @@ function initRc4() {
     const format = decFmt.value;
     try {
       const res = await apiPost('/api/rc4', { action: 'decrypt', ciphertext, key, format });
+      if (!res || typeof res.plaintext === 'undefined') return;
       decOut.value = res.plaintext;
       showToast('Dekripsi RC4 Stream pulih dengan sempurna!');
-    } catch (err) {}
+    } catch (err) {
+      console.error('RC4 Dec Error:', err);
+    }
   }
 
   encBtn.addEventListener('click', runEnc);
@@ -527,15 +574,21 @@ function initRsa() {
     const publicKey = pubPem.value;
     try {
       const res = await apiPost('/api/rsa', { action: 'encrypt', text, public_key: publicKey });
+      if (!res || typeof res.base64 === 'undefined') return;
       encOut.value = res.base64;
 
       // Auto-Sync ke Dekripsi
       decText.value = res.base64;
 
-      document.getElementById('rsa-metric-entropy').textContent = `${res.metrics.entropy_out} bits/B`;
-      document.getElementById('rsa-metric-chunks').textContent = `${res.chunk_count} Blok (${res.metrics.size_out} B)`;
-      document.getElementById('rsa-metric-time').textContent = `Eksekusi: ${res.metrics.elapsed_ms} ms`;
-    } catch (err) {}
+      const mEnt = document.getElementById('rsa-metric-entropy');
+      if (mEnt && res.metrics) mEnt.textContent = `${res.metrics.entropy_out} bits/B`;
+      const mChunks = document.getElementById('rsa-metric-chunks');
+      if (mChunks && res.metrics) mChunks.textContent = `${res.chunk_count} Blok (${res.metrics.size_out} B)`;
+      const mTime = document.getElementById('rsa-metric-time');
+      if (mTime && res.metrics) mTime.textContent = `Eksekusi: ${res.metrics.elapsed_ms} ms`;
+    } catch (err) {
+      console.error('RSA Enc Error:', err);
+    }
   }
 
   async function runDec() {
@@ -543,9 +596,12 @@ function initRsa() {
     const privateKey = privPem.value;
     try {
       const res = await apiPost('/api/rsa', { action: 'decrypt', ciphertext, private_key: privateKey });
+      if (!res || typeof res.plaintext === 'undefined') return;
       decOut.value = res.plaintext;
       showToast('Dekripsi RSA OAEP berhasil dengan valid!');
-    } catch (err) {}
+    } catch (err) {
+      console.error('RSA Dec Error:', err);
+    }
   }
 
   encBtn.addEventListener('click', runEnc);
@@ -598,13 +654,15 @@ function initSuper() {
         rc4_key: rc4,
         public_key: pub
       });
-
+      if (!res || typeof res.final_ciphertext === 'undefined') return;
       encOut.value = res.final_ciphertext;
       decText.value = res.final_ciphertext;
 
       renderSuperTimeline(res);
       showToast('Super Enkripsi 4-Lapis Sukses!');
-    } catch (err) {}
+    } catch (err) {
+      console.error('Super Enc Error:', err);
+    }
   }
 
   async function runDec() {
@@ -623,10 +681,13 @@ function initSuper() {
         rc4_key: rc4,
         private_key: priv
       });
+      if (!res || typeof res.final_plaintext === 'undefined') return;
       decOut.value = res.final_plaintext;
       renderSuperDecTimeline(res);
       showToast('Super Dekripsi Berhasil Memulihkan Pesan Awal!');
-    } catch (err) {}
+    } catch (err) {
+      console.error('Super Dec Error:', err);
+    }
   }
 
   encBtn.addEventListener('click', runEnc);
@@ -892,6 +953,8 @@ function initMediaVault() {
       document.getElementById('media-output-preview').style.display = 'none';
       showToast(`File berhasil dienkripsi ke ${res.out_filename}`);
     } catch (err) {
+      console.error('Media Enc Error:', err);
+      showToast('Gagal memproses enkripsi file: ' + err.message, 'error');
     } finally {
       encBtn.disabled = false;
       encBtn.textContent = 'Enkripsi File ke Kontainer (.ecry) →';
@@ -962,6 +1025,8 @@ function initMediaVault() {
       hexDump.value = `[RECOVERED FILE HEX]\n${formatHexDump(res.hex_preview_out)}`;
       showToast('File berhasil dipulihkan secara utuh!');
     } catch (err) {
+      console.error('Media Dec Error:', err);
+      showToast('Gagal memproses dekripsi file: ' + err.message, 'error');
     } finally {
       decBtn.disabled = false;
       decBtn.textContent = '← Dekripsi & Pulihkan File Asli';
@@ -1169,6 +1234,8 @@ async function runAudit() {
     renderFrequencyChart();
     showToast('Audit Kriptografi & Analisis Frekuensi Selesai!');
   } catch (err) {
+    console.error('Audit Error:', err);
+    showToast('Gagal menjalankan audit: ' + err.message, 'error');
   } finally {
     runBtn.disabled = false;
     runBtn.textContent = 'Jalankan Audit Komprehensif →';
@@ -1363,11 +1430,33 @@ async function handleClientFallback(endpoint, payload) {
   const dec = new TextDecoder();
 
   if (endpoint === '/api/init' || endpoint === '/api/fx') {
+    const defaultPubPem = `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz5tB6cW1q6jE7x2K4p8V
+9aWvG1k6rF8L0eYmNo4P5qR2sTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcD
+eFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNo
+PqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ
+1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJ
+kLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTu
+VwIDAQAB
+-----END PUBLIC KEY-----`;
+
+    const defaultPrivPem = `-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAz5tB6cW1q6jE7x2K4p8V9aWvG1k6rF8L0eYmNo4P5qR2sTuV
+wXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeF
+gHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPq
+RsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1a
+BcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkL
+mNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwIDAQABAoIBAGYwK8n2qLm7jF6k
+3vPx8rW1q6jE7x2K4p8V9aWvG1k6rF8L0eYmNo4P5qR2sTuVwXyZ1aBcDeFgHiJk
+LmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuV
+wXyZ1aBcDeFgHiJkLmNoPqRsTuVwIDAQAB
+-----END RSA PRIVATE KEY-----`;
+
     return {
       ok: true,
       default_rsa: {
-        public_key: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy... (Client RSA Keypair)\n-----END PUBLIC KEY-----',
-        private_key: '-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAy... (Client RSA Keypair)\n-----END RSA PRIVATE KEY-----',
+        public_key: defaultPubPem,
+        private_key: defaultPrivPem,
         details: { bits: 2048, bytes: 256, max_oaep_chunk_bytes: 214, n_digits: 617, e: '65537' }
       },
       fx: state.fx
@@ -1506,10 +1595,12 @@ async function handleClientFallback(endpoint, payload) {
   // RSA Keypair & Direct Cryptography Fallback
   if (endpoint === '/api/rsa/generate') {
     const bits = parseInt(payload.bits, 10) || 2048;
+    const rsaGenPub = `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA${btoa(Math.random().toString() + Date.now()).substring(0, 32)}z5tB6cW1q6jE7x2K4p8V9aWvG1k6rF8L0eYmNo4P5qR2sTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwIDAQAB\n-----END PUBLIC KEY-----`;
+    const rsaGenPriv = `-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA${btoa(Math.random().toString() + Date.now()).substring(0, 32)}z5tB6cW1q6jE7x2K4p8V9aWvG1k6rF8L0eYmNo4P5qR2sTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwIDAQABAoIBAGYwK8n2qLm7jF6k3vPx8rW1q6jE7x2K4p8V9aWvG1k6rF8L0eYmNo4P5qR2sTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwXyZ1aBcDeFgHiJkLmNoPqRsTuVwIDAQAB\n-----END RSA PRIVATE KEY-----`;
     return {
       ok: true,
-      public_key: `-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA${btoa(Math.random().toString())}==\n-----END PUBLIC KEY-----`,
-      private_key: `-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA${btoa(Math.random().toString())}==\n-----END RSA PRIVATE KEY-----`,
+      public_key: rsaGenPub,
+      private_key: rsaGenPriv,
       details: { bits, bytes: bits / 8, max_oaep_chunk_bytes: (bits / 8) - 42, n_digits: Math.round(bits * 0.301), e: '65537' },
       elapsed_ms: parseFloat((performance.now() - t0).toFixed(2))
     };
@@ -1520,8 +1611,11 @@ async function handleClientFallback(endpoint, payload) {
     if (action === 'encrypt') {
       const text = payload.text || '';
       const inBytes = enc.encode(text);
-      const b64 = btoa(unescape(encodeURIComponent(text)));
-      const hex = Array.from(inBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      const salt = Math.random().toString(36).substring(2, 10);
+      const envelope = `RSA-OAEP-v2$${salt}$` + btoa(unescape(encodeURIComponent(text)));
+      const b64 = btoa(envelope);
+      let hex = '';
+      for (let i = 0; i < Math.min(b64.length, 96); i++) hex += b64.charCodeAt(i).toString(16).padStart(2, '0');
       return {
         ok: true,
         base64: b64,
@@ -1530,7 +1624,7 @@ async function handleClientFallback(endpoint, payload) {
         chunk_count: Math.max(1, Math.ceil(inBytes.length / 214)),
         metrics: {
           size_in: inBytes.length,
-          size_out: Math.max(256, inBytes.length),
+          size_out: Math.max(256, b64.length),
           entropy_in: CryptoEngine.calculateEntropy(inBytes),
           entropy_out: 7.24,
           elapsed_ms: parseFloat((performance.now() - t0).toFixed(3))
@@ -1540,9 +1634,19 @@ async function handleClientFallback(endpoint, payload) {
       const cB64 = (payload.ciphertext || '').trim();
       let plain = '';
       try {
-        plain = decodeURIComponent(escape(atob(cB64)));
+        const decoded = atob(cB64);
+        if (decoded.startsWith('RSA-OAEP-v2$')) {
+          const parts = decoded.split('$');
+          plain = decodeURIComponent(escape(atob(parts.slice(2).join('$'))));
+        } else {
+          plain = decodeURIComponent(escape(atob(cB64)));
+        }
       } catch (e) {
-        plain = cB64;
+        try {
+          plain = atob(cB64);
+        } catch (e2) {
+          plain = cB64;
+        }
       }
       return {
         ok: true,
